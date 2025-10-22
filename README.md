@@ -84,11 +84,11 @@ bump-and-release.sh では以下の優先度でバージョン種別を判定し
 | その他 (未定義の型) | 上記以外すべて | patch |
 
 ### 例
-- feat: add search API → minor (v1.2.3 → v1.3.0)
-- feat!: remove legacy auth → major (v1.2.3 → v2.0.0)
-- fix: prevent null pointer → patch (v1.2.3 → v1.2.4)
-- docs: update usage guide → patch
-- refactor: split service layer → patch
+- feat: APIを追加 → minor (v1.2.3 → v1.3.0)
+- feat!: 旧認証方法を削除 → major (v1.2.3 → v2.0.0)
+- fix: ヌルポインタを防止 → patch (v1.2.3 → v1.2.4)
+- docs: 使い方ガイドを更新 → patch
+- refactor: サービス層を分割 → patch
 
 ### コミットテンプレートの設定方法
 
