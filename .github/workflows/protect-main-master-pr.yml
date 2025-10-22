@@ -1,0 +1,28 @@
+name: Protect main/master PR from non-feature branches
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  block-non-feature-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check PR source branch
+        run: |
+          echo "Base: ${{ github.event.pull_request.base.ref }}"
+          echo "Head: ${{ github.event.pull_request.head.ref }}"
+
+          BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
+          HEAD_BRANCH="${{ github.event.pull_request.head.ref }}"
+
+          # main または master に対する PR のみ対象
+          if [[ "$BASE_BRANCH" =~ ^(main|master)$ ]]; then
+            if [[ ! "$HEAD_BRANCH" =~ ^feature/ ]]; then
+              echo "❌ エラー: ${BASE_BRANCH} への PR は feature/* ブランチからのみ許可されています。"
+              exit 1
+            fi
+          fi
+
+          echo "✅ OK: 条件を満たしています。"
