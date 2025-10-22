@@ -1,0 +1,36 @@
+name: Auto Release
+
+on:
+  push:
+    branches: [ main ]  # mainブランチへのpush時にワークフローをトリガー
+
+permissions:
+  contents: write   # タグ作成・Release作成に必要な権限
+
+jobs:
+  release:
+    runs-on: ubuntu-latest  # Ubuntu最新環境でジョブを実行
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # タグと全履歴を取得（リリースやバージョン付与に必要）
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update  # パッケージリストを更新
+          sudo apt-get install -y jq curl  # jq（JSON操作用）とcurl（HTTPリクエスト用）をインストール
+
+      - name: Make bump-and-release script executable
+        run: chmod +x ./.github/scripts/bump-and-release.sh  # シェルスクリプトに実行権限を付与
+
+      - name: Configure git user
+        run: |
+          git config --global user.name "github-actions[bot]"  # GitHub Actions用ユーザー名を設定
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"  # メールアドレスも設定
+
+      - name: Run bump-and-release script
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}  # リポジトリ名を環境変数にセット
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}     # 認証用トークンを環境変数にセット
+        run: ./.github/scripts/bump-and-release.sh  # バージョンアップ＆リリース用スクリプトを実行
