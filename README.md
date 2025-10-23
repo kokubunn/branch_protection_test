@@ -32,14 +32,16 @@
 ### 禁止行為
 - `master`または`main`の**直接 push 禁止**
 - `development_check`の**直接 push 禁止**
-- **`PR` を経由**しない`master`, `main`または、`development_check`へのmerge
+- **`PR` を経由**しない`master`, `main`または、`development_check`へのmergeを禁止
+- `development_check`からの新規ブランチ作成を禁止
+- `development_check`の他ブランチへのmergeを禁止
 
 ---
 
 ## 開発フロー
 
 1. `main` から `feature/xxx` を作成
-2. 開発 → PR を作成して `development_check` にマージ
+2. `feature/xxx` → PR を作成して `development_check` にマージ
 3. テスト環境にデプロイして動作確認
 4. 問題なければ **同じ `feature/xxx` を main へ PR 作成 → マージ**
 5. 本番デプロイは `main` から
