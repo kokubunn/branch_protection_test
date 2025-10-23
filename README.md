@@ -29,9 +29,8 @@
 
 ### 禁止行為
 - `master`または`main`の**直接 push 禁止**
-- `develop`の**直接 push 禁止**
 - `development_check`の**直接 push 禁止**
-- **`PR` を経由**しないmerge
+- **`PR` を経由**しない`master`, `main`または、`development_check`へのmerge
 
 ---
 
