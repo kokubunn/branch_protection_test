@@ -15,7 +15,7 @@ set -euo pipefail
   処理フロー (手順):
     1. 必須環境変数検証
     2. タグ取得 (保険的 fetch)
-    3. 最新タグ決定 (無い場合は v0.0.0)
+    3. 最新タグ決定 (無い場合は 0.0.0)
     4. コミット本文/件名収集
     5. バージョン種別判定
     6. 次バージョン計算
@@ -40,7 +40,7 @@ fi
 git fetch --tags ${REMOTE} || true
 
 # Step 3: Determine last tag / 最新タグ取得 (無ければ初期値)
-LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0")
 echo "last tag: ${LAST_TAG}"
 
 # Step 4: Collect commit bodies / コミット本文収集
@@ -68,7 +68,7 @@ case "${BUMP}" in
   minor) MI=$((MI+1)); PA=0 ;;
   patch) PA=$((PA+1)) ;;
 esac
-NEW_TAG="v${MA}.${MI}.${PA}"
+NEW_TAG="${MA}.${MI}.${PA}"
 echo "new tag: ${NEW_TAG}"
 
 # Step 7: Check remote collision / 重複タグ存在確認
@@ -103,10 +103,10 @@ else
 fi
 
 # (出力例)
-# last tag: v1.2.2
+# last tag: 1.2.2
 # detected bump: minor
-# new tag: v1.3.0
-# pushing tag v1.3.0 ...
-# Release created: https://github.com/owner/repo/releases/tag/v1.3.0
+# new tag: 1.3.0
+# pushing tag 1.3.0 ...
+# Release created: https://github.com/owner/repo/releases/tag/1.3.0
 
 exit 0
