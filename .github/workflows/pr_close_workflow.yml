@@ -1,0 +1,58 @@
+name: PR Close Workflow (Delete Branches & Auto Version Tag)
+
+# ------------------------------------------------------
+# PR がクローズまたはマージされたときに自動実行
+# ------------------------------------------------------
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  delete-branches:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # ブランチ削除に必要
+    steps:
+      - name: Delete branches based on naming rules
+        run: |
+          # PR情報を取得
+          BRANCH="${{ github.event.pull_request.head.ref }}"
+          BASE="${{ github.event.pull_request.base.ref }}"
+          MERGED="${{ github.event.pull_request.merged }}"
+
+          echo "Target branch: $BRANCH"
+          echo "Base branch: $BASE"
+          echo "PR merged: $MERGED"
+
+          # ブランチ削除用関数を定義
+          delete_branch() {
+            local branch=$1
+            echo "Deleting branch '$branch'..."
+            # GitHub APIでブランチを削除
+            curl -s -X DELETE \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Accept: application/vnd.github.v3+json" \
+              https://api.github.com/repos/${{ github.repository }}/git/refs/heads/$branch
+            echo "Branch '$branch' deleted successfully."
+          }
+
+          # ------------------------------------------------------
+          # featureブランチの自動削除
+          # 条件: headがfeature/* かつ baseがmainまたはmaster
+          # ------------------------------------------------------
+          if [[ "$BRANCH" == feature/* ]] && ([[ "$BASE" == "main" ]] || [[ "$BASE" == "master" ]]); then
+            echo "Feature branch matched deletion rules."
+            delete_branch "$BRANCH"
+
+          # ------------------------------------------------------
+          # devcheckブランチの自動削除
+          # 条件: headがdevcheck/* ならbaseに関係なく削除
+          # ------------------------------------------------------
+          elif [[ "$BRANCH" == devcheck/* ]]; then
+            echo "Devcheck branch matched deletion rules."
+            delete_branch "$BRANCH"
+
+          else
+            # 削除対象外のブランチ
+            echo "Branch '$BRANCH' does not match deletion rules. Skipping."
+          fi
