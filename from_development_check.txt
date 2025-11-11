@@ -1,0 +1,1 @@
+# development_checkブランチから派生したfeature/*ブランチがmainブランチにMergeできるかを確認する
